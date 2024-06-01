@@ -33,6 +33,7 @@ find_markers:
 
 .analyze_bitmap:
     ;get image height from header
+    xor rcx, rcx
     mov cl, BYTE[rdi+23]
     shl rcx, 8
     mov cl, BYTE[rdi+22]
@@ -60,7 +61,7 @@ find_markers:
 
     ; get offset to pixel data
     xor rcx, rcx    ; clear rcx after div
-    ; mov rdx, QWORD[rbp-24]   ; load address *y_pos back to rdx
+    mov rdx, QWORD[rbp-24]   ; load address *y_pos back to rdx
     mov cl, BYTE[rdi+11]
     shl rcx, 8
     mov cl, BYTE[rdi+10]
@@ -93,6 +94,7 @@ find_markers:
 
 .possible_corner:
     mov rax, r10 ; restore x
+    jmp .arm_one
 
 .arm_one:
     mov r11, rax ; save corner's x for later
@@ -108,6 +110,7 @@ find_markers:
     jz .not_a_marker_1 ; if pixel below corner is black it's not a marker
     mov rax, r10 ; restore x
     inc rax ; x+=1
+    jmp .arm_one_loop
 
 .arm_one_loop:
     cmp rax, QWORD[rbp-8]  ; if x>= WIDTH end of arm_one
@@ -377,8 +380,8 @@ find_markers:
     sub rcx, rbx    ; HEIGHT - corner_y
     dec rcx     ; corrected y coordinate
 
-    ; mov QWORD[rdx + 4*r8], rcx     ; add y to list
-    mov QWORD[rbp-24 + 4*r8], rcx     ; add y to list
+    mov QWORD[rdx + 4*r8], rcx     ; add y to list
+    ; mov QWORD[rbp-24 + 4*r8], rcx     ; add y to list
 
     ;increment counter of markers
     inc r8
@@ -386,9 +389,9 @@ find_markers:
     jmp .not_a_marker_2 ;find new markers
 
 .exit:
-    mov rax, QWORD[rbp-4] ; load marker counter to rax
+    mov rax, r8 ; load marker counter to rax
 
-    pop QWORD[rbp-16]
+    pop r15
     pop r14
     pop r13
     pop r12
@@ -399,11 +402,10 @@ find_markers:
     ret
 
 get_pixel:
-; description:
-;   returns color of specified pixel
+  ;   returns color of specified pixel
 ; arguments:
 ;   rax - x coordinate
-;   rdx - y coordinate
+;   rbx - y coordinate
 ; return value:
 ;   rax - 0RGB - pixel color
 
@@ -413,7 +415,7 @@ get_pixel:
     ;pixel address calculation
     xor rcx, rcx    ; reset rcx
     mov rcx, r15  ; move bytes per row to rcx
-    imul rcx, rdx   ; rcx = y*bytes_per_row
+    imul rcx, rbx  ; rcx = y*bytes_per_row
     imul rax, 3     ; 3*x
     add rcx, rax    ; rcx += (3x)
     add rcx, rdi   ; pixel_address = bitmap_address + (3*x + y * bytes_per_row)
