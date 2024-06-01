@@ -37,7 +37,7 @@ find_markers:
     mov cl, BYTE[rdi+23]
     shl rcx, 8
     mov cl, BYTE[rdi+22]
-    mov QWORD[rbp-16], rcx  ; move image height to rbp-32
+    mov QWORD[rbp-16], rcx  ; move image height to rbp-16
 
     
     ;get image width from header
@@ -45,7 +45,7 @@ find_markers:
     mov cl, BYTE[rdi+19]
     shl rcx, 8
     mov cl, BYTE[rdi+18]
-    mov QWORD[rbp-8], rcx  ; move image width to rbp-36
+    mov QWORD[rbp-8], rcx  ; move image width to rbp-8
 
     ;calculate bytes per row - ((BitPerPixel * Width + 31) // 32) * 4
     imul rcx, 24    ; BitPerPixel * Width
@@ -217,7 +217,7 @@ find_markers:
     ; marker thickness calculations
     mov rcx, rbx    ; rcx = current_y
     sub rcx, r12  ; arm one thickness = current_y - corner_y
-    mov r9, rcx   ; move thickness value to rbp-8
+    mov r9, rcx   ; move thickness value to r9
 
     mov rax, r10  ; restore x
     dec rax ; x-=1
@@ -373,15 +373,13 @@ find_markers:
     ; add x coordinate to list
     mov QWORD[rsi + 4*r8], rax     ; add x to list
 
-    ; add y coordinate to list
-
     ; correct y coordinate
     mov rcx, QWORD[rbp-16]
     sub rcx, rbx    ; HEIGHT - corner_y
     dec rcx     ; corrected y coordinate
 
+    ; add y coordinate to list
     mov QWORD[rdx + 4*r8], rcx     ; add y to list
-    ; mov QWORD[rbp-24 + 4*r8], rcx     ; add y to list
 
     ;increment counter of markers
     inc r8
