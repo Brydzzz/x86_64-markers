@@ -1,4 +1,4 @@
-# Projekt x86 - zadanie 6.22
+# Projekt x86_64 - zadanie 6.22
 
 ## Wykrywany znacznik - 7
 
@@ -34,16 +34,17 @@
 Za pierwszym razem `make` nie znajduje `main.o`. Po wpisaniu ponownie `make` program się buduje
 ```
 >make                                                                           
-nasm -o find_markers.o -f elf -g -l find_markers.lst find_markers.asm
-g++ -m32 -c -g -O0 main.cpp -o main.o &> errors.txt
-g++ -m32 -g -o find_markers main.o find_markers.o 
+nasm -o find_markers.o -f elf64 -g -l find_markers.lst find_markers.asm
+g++ -c -g -O0 main.cpp -o main.o &> errors.txt
+g++ -g -o find_markers main.o find_markers.o 
 /usr/bin/ld: cannot find main.o: No such file or directory
 collect2: error: ld returned 1 exit status
 make: *** [makefile:13: link] Error 1
+
 >make
-nasm -o find_markers.o -f elf -g -l find_markers.lst find_markers.asm
-g++ -m32 -c -g -O0 main.cpp -o main.o &> errors.txt
-g++ -m32 -g -o find_markers main.o find_markers.o
+nasm -o find_markers.o -f elf64 -g -l find_markers.lst find_markers.asm
+g++ -c -g -O0 main.cpp -o main.o &> errors.txt
+g++ -g -o find_markers main.o find_markers.o
 ```
 
 ## Uproszczony schemat działania `find_markers`
