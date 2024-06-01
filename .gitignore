@@ -4,3 +4,4 @@ find_markers
 errors.txt
 find_markers.lst
 test.sh
+run_tests.py
