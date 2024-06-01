@@ -68,7 +68,7 @@ find_markers:
     add rdi, rcx    ; add offset to address of bitmap
 
     xor rax, rax    ; rax - current x coordinate
-    xor rdx, rbx    ; rbx - current y coordinate
+    xor rbx, rbx    ; rbx - current y coordinate
 
 .find_corner_in_row_loop:
     cmp rbx, QWORD[rbp-16]
